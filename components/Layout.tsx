@@ -6,12 +6,19 @@ type Props = {
 };
 export default function Layout({ title, children }: PropsWithChildren<Props>) {
   return (
-    <Container>
-      <header>
-        <h1>title</h1>
+    <div className="flex flex-col min-h-screen">
+      {/* Header */}
+      <header className="h-16 bg-blue-500 text-white flex items-center justify-center">
+        <h1>{title}</h1>
       </header>
-      <main>{children}</main>
-      <footer>© 2024 My Application</footer>
-    </Container>
+
+      {/* Main Content */}
+      <main className="flex-1">{children}</main>
+
+      {/* Footer */}
+      <footer className="h-16 bg-gray-800 text-white flex items-center justify-center">
+        <p>© 2024 My App</p>
+      </footer>
+    </div>
   );
 }
