@@ -1,6 +1,5 @@
 import { UserDetail } from "@/features/users/components/UserDetail";
-import { getUserById } from "@/features/users/api/getUserById";
-import { Container } from "@/components/Container";
+import Layout from "@/components/Layout";
 
 export type UserDetailPageProps = {
   params: { id: string };
@@ -8,9 +7,8 @@ export type UserDetailPageProps = {
 
 export default async function UserDetailPage({ params }: UserDetailPageProps) {
   return (
-    <Container>
-      <h1>User Detail</h1>
+    <Layout title="User Deatil">
       <UserDetail userId={params.id} />
-    </Container>
+    </Layout>
   );
 }

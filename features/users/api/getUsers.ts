@@ -1,3 +1,4 @@
+import { notFound } from "next/navigation";
 import { User } from "../types/User";
 
 export async function getUsers(): Promise<User[]> {
@@ -5,7 +6,7 @@ export async function getUsers(): Promise<User[]> {
     cache: "no-store",
   });
   if (!res.ok) {
-    throw new Error("Failed to fetch users");
+    notFound();
   }
   const users = (await res.json()) satisfies User[] as User[];
   return users;

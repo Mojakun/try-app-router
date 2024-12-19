@@ -1,11 +1,13 @@
 import { Container } from "@/components/Container";
+import Layout from "@/components/Layout";
 import Users from "@/features/users/components/Users";
 
 export default function UsersPage() {
   return (
     <Container>
-      <h1>Users</h1>
-      <Users />
+      <Layout title="Users">
+        <Users />
+      </Layout>
     </Container>
   );
 }
