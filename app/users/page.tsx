@@ -6,7 +6,7 @@ import Users from "@/features/users/components/Users";
 import { Suspense } from "react";
 
 export default async function UsersPage() {
-  const users = await getUsers();
+  const users = await getUsers({ cache: "force-cache" });
   return (
     <Layout title="Users">
       <Container>

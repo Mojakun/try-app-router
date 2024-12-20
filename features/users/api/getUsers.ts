@@ -1,9 +1,13 @@
 import { notFound } from "next/navigation";
 import { User } from "../types/User";
 
-export async function getUsers(): Promise<User[]> {
+export async function getUsers({
+  cache = "no-store",
+}: {
+  cache?: "no-store" | "force-cache";
+}): Promise<User[]> {
   const res = await fetch("https://jsonplaceholder.typicode.com/users", {
-    cache: "no-store",
+    cache,
   });
   if (!res.ok) {
     notFound();

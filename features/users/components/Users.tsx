@@ -3,47 +3,74 @@
 import { useState } from "react";
 import Link from "next/link";
 import { User } from "../types/User";
+import { getUsers } from "../api/getUsers";
+import LoadingSpinner from "@/components/LoadingSpinner";
 
-type Props = {
-  users: User[];
-};
+export default function Users({ users }: { users: User[] }) {
+  const [filter, setFilter] = useState("");
+  const [userList, setUserList] = useState<User[]>(users);
+  const [isLoading, setIsLoading] = useState(false);
 
-export default function Users({ users }: Props) {
-  const [filter, setFilter] = useState(""); // フィルタ条件の管理
-
-  // フィルタリング処理
-  const filteredUsers = users.filter((user) =>
+  const filteredUsers = userList.filter((user) =>
     user.name.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // フィルタ状態に応じた表示リスト
-  const displayedUsers = filter ? filteredUsers : users;
+  const displayedUsers = filter ? filteredUsers : userList;
+
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      const users = await getUsers({ cache: "no-store" });
+      setUserList(users);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div>
-      <input
-        type="text"
-        placeholder="Search users"
-        value={filter}
-        onChange={(e) => setFilter(e.target.value)} // 入力値を更新
-        className="border rounded-md p-2 w-full mb-4 shadow-sm focus:ring focus:ring-blue-300"
-      />
-
-      <div className="overflow-auto" style={{ height: "400px" }}>
-        <ul className="space-y-2">
-          {displayedUsers.map((user) => (
-            <li
-              key={user.id}
-              className="p-2 bg-gray-100 hover:bg-gray-200 rounded-md shadow"
-            >
-              <Link href={`/users/${user.id}`}>{user.name}</Link>
-            </li>
-          ))}
-        </ul>
-        {filteredUsers.length === 0 && filter && (
-          <p className="text-gray-500">No users found.</p>
-        )}
+      <div className="flex justify-between items-center mb-4">
+        <input
+          type="text"
+          placeholder="Search users"
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border rounded-md p-2 w-full mr-2 shadow-sm focus:ring focus:ring-blue-300"
+        />
+        <button
+          onClick={fetchUsers}
+          disabled={isLoading}
+          className={`px-4 py-2 rounded-md shadow ${
+            isLoading
+              ? "bg-gray-300 cursor-not-allowed"
+              : "bg-blue-500 text-white hover:bg-blue-600"
+          }`}
+        >
+          {isLoading ? "Reloading..." : "Reload"}
+        </button>
       </div>
+
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <div className="overflow-auto" style={{ height: "400px" }}>
+          <ul className="space-y-2">
+            {displayedUsers.map((user) => (
+              <li
+                key={user.id}
+                className="p-2 bg-gray-100 hover:bg-gray-200 rounded-md shadow"
+              >
+                <Link href={`/users/${user.id}`}>{user.name}</Link>
+              </li>
+            ))}
+          </ul>
+          {filteredUsers.length === 0 && filter && (
+            <p className="text-gray-500">No users found.</p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
